@@ -1,0 +1,33 @@
+{
+  "name": "hapi-service-deps",
+  "version": "0.0.1",
+  "description": "hapi plugin for service-deps library",
+  "main": "index.js",
+  "scripts": {
+    "test": "tap --cov test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/firstandthird/hapi-service-deps.git"
+  },
+  "keywords": [],
+  "author": "Greg Allen <code@firstandthird.com> (http://firstandthird.com/)",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/firstandthird/hapi-service-deps/issues"
+  },
+  "homepage": "https://github.com/firstandthird/hapi-service-deps#readme",
+  "devDependencies": {
+    "eslint": "^4.18.1",
+    "eslint-config-firstandthird": "^4.3.0",
+    "eslint-plugin-import": "^2.9.0",
+    "hapi": "^17.2.1",
+    "tap": "^10.7.2"
+  },
+  "eslintConfig": {
+    "extends": "firstandthird"
+  },
+  "dependencies": {
+    "service-deps": "^1.0.0"
+  }
+}
