@@ -1,6 +1,6 @@
 {
   "name": "hapi-service-deps",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "description": "hapi plugin for service-deps library",
   "main": "index.js",
   "scripts": {
