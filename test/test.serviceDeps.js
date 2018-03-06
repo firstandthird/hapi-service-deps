@@ -10,6 +10,7 @@ tap.test('can initialize and use service deps', async t => {
     plugin,
     options: {
       checkOnStart: false,
+      startMonitor: false,
       services: {
         test: 'http://test'
       }
@@ -22,12 +23,13 @@ tap.test('can initialize and use service deps', async t => {
   t.end();
 });
 
-tap.test('service deps starts/stops listening when server starts/stops', async t => {
+tap.test('options.startMonitor will start listening when server starts', async t => {
   const server = new Hapi.Server({ port: 8080 });
   await server.register({
     plugin,
     options: {
       checkOnStart: false,
+      startMonitor: true,
       monitorInterval: 100,
       services: {
         test: 'http://localhost:8080'
@@ -65,6 +67,7 @@ tap.test('will log an error when "service.error" event is emitted', async t => {
     plugin,
     options: {
       checkOnStart: false,
+      startMonitor: false,
       services: {
         test: 'http://test'
       }
@@ -95,6 +98,7 @@ tap.test('verbose mode logs service.add and service.check', async t => {
     plugin,
     options: {
       checkOnStart: false,
+      startMonitor: false,
       verbose: true,
       monitorInterval: 400,
       services: {}
@@ -121,6 +125,7 @@ tap.test('verbose mode logs service.add and service.check', async t => {
     }
   });
   await server.start();
+  server.services.startMonitor();
   server.services.addService('test', 'http://localhost:8080/');
   await wait(500);
   server.services.stopMonitor();
