@@ -80,6 +80,7 @@ tap.test('verbose mode logs service.add and service.check', async t => {
     if (!serviceCheck && input.tags.includes('service.check')) {
       serviceCheck = true;
       t.match(input.data.name, 'test');
+      t.match(input.data.service, { endpoint: 'http://localhost:8080/' });
     }
     if (!serviceAdd && input.tags.includes('service.add')) {
       serviceAdd = true;
@@ -87,7 +88,7 @@ tap.test('verbose mode logs service.add and service.check', async t => {
     }
   });
   await server.start();
-  server.services.addService('test', 'http://test:8080/');
+  server.services.addService('test', 'http://localhost:8080/');
   await wait(500);
   server.services.stopMonitor();
   // now stop server:
