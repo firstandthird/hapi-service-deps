@@ -9,6 +9,9 @@ const register = (server, options) => {
   server.events.on('stop', () => {
     server.services.stopMonitor();
   });
+  server.services.on('service.error', (name, service, error) => {
+    server.log(['service-deps', 'error'], { name, service, error: error.stack || error.message || error });
+  });
 };
 
 exports.plugin = {
