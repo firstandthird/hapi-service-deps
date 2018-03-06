@@ -70,11 +70,16 @@ tap.test('will log an error when "service.error" event is emitted', async t => {
   let seen = false;
   server.events.on('log', (input) => {
     t.isA(input.timestamp, 'number');
-    t.equal(input.tags[0], 'error');
-    t.isA(input.error, Error);
+    t.equal(input.tags[0], 'service-deps');
+    t.equal(input.tags[1], 'error');
+    t.match(input.data, {
+      name: 'test',
+      service: { endpoint: 'http://test' },
+    });
+    t.isA(input.data.error, Error);
     seen = true;
   });
-  server.services.emit('service.error', new Error('this is an error'));
+  server.services.emit('service.error', 'test', { endpoint: 'http://test' }, new Error('this is an error'));
   await server.stop();
   await wait(200);
   t.ok(seen);
