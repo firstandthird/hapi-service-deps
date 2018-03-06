@@ -22,7 +22,7 @@ tap.test('can initialize and use service deps', async t => {
   t.end();
 });
 
-tap.test('service deps starts/stops listening when server starts/stops', async t => {
+tap.test('options.startMonitor will not listen until explicitly called when false', async t => {
   const server = new Hapi.Server({ port: 8080 });
   await server.register({
     plugin,
@@ -46,6 +46,9 @@ tap.test('service deps starts/stops listening when server starts/stops', async t
   server.services.on('service.check', () => {
     checks++;
   });
+  await wait(200);
+  t.equal(checks, 0, 'does not monitor until started');
+  server.services.startMonitor();
   await wait(200);
   // verify event handler was called:
   t.ok(checks > 0);
@@ -155,6 +158,7 @@ tap.test('verbose mode logs service.add and service.check', async t => {
     }
   });
   await server.start();
+  server.services.startMonitor();
   server.services.addService('test', 'http://localhost:8080/');
   await wait(500);
   server.services.stopMonitor();

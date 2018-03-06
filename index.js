@@ -11,10 +11,6 @@ const register = (server, pluginOptions) => {
   server.decorate('server', 'services', services);
   if (options.startMonitor) {
     server.services.startMonitor();
-  } else {
-    server.events.on('start', () => {
-      server.services.startMonitor();
-    });
   }
   server.events.on('stop', () => {
     server.services.stopMonitor();
