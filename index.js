@@ -5,7 +5,7 @@ const defaults = {
 };
 
 const register = (server, pluginOptions) => {
-  const options = Object.assign(defaults, pluginOptions);
+  const options = Object.assign({}, defaults, pluginOptions);
   const services = new ServiceDeps(options);
   server.decorate('server', 'services', services);
   server.events.on('start', () => {
