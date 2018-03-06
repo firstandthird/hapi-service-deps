@@ -1,16 +1,20 @@
 const ServiceDeps = require('service-deps');
 
 const defaults = {
-  verbose: false
+  startMonitor: true, // start monitoring as soon as plugin is registered
+  verbose: false // log all service.check and service.add events
 };
 
 const register = (server, pluginOptions) => {
   const options = Object.assign({}, defaults, pluginOptions);
   const services = new ServiceDeps(options);
   server.decorate('server', 'services', services);
-  server.events.on('start', () => {
-    server.services.startMonitor();
-  });
+  // if startMonitor is false you will have to manually call services.startMonitor()
+  if (options.startMonitor) {
+    server.events.on('start', () => {
+      server.services.startMonitor();
+    });
+  }
   server.events.on('stop', () => {
     server.services.stopMonitor();
   });
