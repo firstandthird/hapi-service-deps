@@ -9,6 +9,7 @@ tap.test('can initialize and use service deps', async t => {
   await server.register({
     plugin,
     options: {
+      checkOnStart: false,
       startMonitor: false,
       services: {
         test: 'http://test'
@@ -27,6 +28,7 @@ tap.test('options.startMonitor will start listening when server starts', async t
   await server.register({
     plugin,
     options: {
+      checkOnStart: false,
       startMonitor: true,
       monitorInterval: 100,
       services: {
@@ -64,6 +66,7 @@ tap.test('will log an error when "service.error" event is emitted', async t => {
   await server.register({
     plugin,
     options: {
+      checkOnStart: false,
       startMonitor: false,
       services: {
         test: 'http://test'
@@ -94,6 +97,7 @@ tap.test('verbose mode logs service.add and service.check', async t => {
   await server.register({
     plugin,
     options: {
+      checkOnStart: false,
       startMonitor: false,
       verbose: true,
       monitorInterval: 400,
@@ -129,5 +133,41 @@ tap.test('verbose mode logs service.add and service.check', async t => {
   t.ok(serviceCheck);
   t.ok(serviceAdd);
   await server.stop();
+  t.end();
+});
+
+tap.test('options.checkOnStart will run a service check during server startup', async t => {
+  const server = new Hapi.Server({ port: 8080 });
+  const server2 = new Hapi.Server({ port: 8081 });
+  await server.register({
+    plugin,
+    options: {
+      startMonitor: false,
+      checkOnStart: true,
+      monitorInterval: 10000,
+      services: {
+        test: 'http://localhost:8081/'
+      }
+    }
+  });
+  server2.route({
+    method: 'get',
+    path: '/',
+    handler(request, h) {
+      return 'ok';
+    }
+  });
+  let checks = 0;
+  server.services.on('service.check', () => {
+    checks++;
+  });
+  await server2.start();
+  await server.start();
+  await wait(200);
+  // verify event handler was called:
+  t.ok(checks === 1);
+  // now stop server:
+  await server.stop();
+  await server2.stop();
   t.end();
 });

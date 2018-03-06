@@ -1,6 +1,7 @@
 const ServiceDeps = require('service-deps');
 
 const defaults = {
+  checkOnStart: true, // do an initial check when server is started
   startMonitor: true, // start monitoring as soon as plugin is registered
   verbose: false // log all service.check and service.add events
 };
@@ -15,6 +16,14 @@ const register = (server, pluginOptions) => {
       server.services.startMonitor();
     });
   }
+  if (options.checkOnStart) {
+    server.ext('onPreStart', server.services.checkServices.bind(services));
+  }
+
+  server.events.on('start', () => {
+    server.services.startMonitor();
+  });
+
   server.events.on('stop', () => {
     server.services.stopMonitor();
   });
