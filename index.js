@@ -1,6 +1,7 @@
 const ServiceDeps = require('service-deps');
 
 const defaults = {
+  checkOnStart: true,
   verbose: false
 };
 
@@ -8,6 +9,10 @@ const register = (server, pluginOptions) => {
   const options = Object.assign({}, defaults, pluginOptions);
   const services = new ServiceDeps(options);
   server.decorate('server', 'services', services);
+  if (options.checkOnStart) {
+    server.services.checkServices();
+  }
+
   server.events.on('start', () => {
     server.services.startMonitor();
   });

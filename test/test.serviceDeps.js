@@ -9,6 +9,7 @@ tap.test('can initialize and use service deps', async t => {
   await server.register({
     plugin,
     options: {
+      checkOnStart: false,
       services: {
         test: 'http://test'
       }
@@ -26,6 +27,7 @@ tap.test('service deps starts/stops listening when server starts/stops', async t
   await server.register({
     plugin,
     options: {
+      checkOnStart: false,
       monitorInterval: 100,
       services: {
         test: 'http://localhost:8080'
@@ -62,6 +64,7 @@ tap.test('will log an error when "service.error" event is emitted', async t => {
   await server.register({
     plugin,
     options: {
+      checkOnStart: false,
       services: {
         test: 'http://test'
       }
@@ -91,6 +94,7 @@ tap.test('verbose mode logs service.add and service.check', async t => {
   await server.register({
     plugin,
     options: {
+      checkOnStart: false,
       verbose: true,
       monitorInterval: 400,
       services: {}
