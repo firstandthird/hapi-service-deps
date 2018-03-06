@@ -1,6 +1,11 @@
 const ServiceDeps = require('service-deps');
 
-const register = (server, options) => {
+const defaults = {
+  verbose: false
+};
+
+const register = (server, pluginOptions) => {
+  const options = Object.assign(defaults, pluginOptions);
   const services = new ServiceDeps(options);
   server.decorate('server', 'services', services);
   server.events.on('start', () => {
@@ -9,6 +14,14 @@ const register = (server, options) => {
   server.events.on('stop', () => {
     server.services.stopMonitor();
   });
+  if (options.verbose) {
+    server.services.on('service.check', (name, service, healthUrl) => {
+      server.log(['hapi-service-deps', 'service.check'], { name, service });
+    });
+    server.services.on('service.add', (name) => {
+      server.log(['hapi-service-deps', 'service.add'], { name });
+    });
+  }
 };
 
 exports.plugin = {

@@ -56,3 +56,43 @@ tap.test('service deps starts/stops listening when server starts/stops', async t
   t.equal(preChecks, checks);
   t.end();
 });
+
+tap.test('verbose mode logs service.add and service.check', async t => {
+  const server = new Hapi.Server({ port: 8080 });
+  await server.register({
+    plugin,
+    options: {
+      verbose: true,
+      monitorInterval: 400,
+      services: {}
+    }
+  });
+  server.route({
+    method: 'get',
+    path: '/',
+    handler(request, h) {
+      return 'ok';
+    }
+  });
+  let serviceCheck = false;
+  let serviceAdd = false;
+  server.events.on('log', (input) => {
+    if (!serviceCheck && input.tags.includes('service.check')) {
+      serviceCheck = true;
+      t.match(input.data.name, 'test');
+    }
+    if (!serviceAdd && input.tags.includes('service.add')) {
+      serviceAdd = true;
+      t.match(input.data.name, 'test');
+    }
+  });
+  await server.start();
+  server.services.addService('test', 'http://test:8080/');
+  await wait(500);
+  server.services.stopMonitor();
+  // now stop server:
+  t.ok(serviceCheck);
+  t.ok(serviceAdd);
+  await server.stop();
+  t.end();
+});
