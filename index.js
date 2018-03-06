@@ -9,8 +9,11 @@ const register = (server, pluginOptions) => {
   const options = Object.assign({}, defaults, pluginOptions);
   const services = new ServiceDeps(options);
   server.decorate('server', 'services', services);
+  // if startMonitor is false you will have to manually call services.startMonitor()
   if (options.startMonitor) {
-    server.services.startMonitor();
+    server.events.on('start', () => {
+      server.services.startMonitor();
+    });
   }
   server.events.on('stop', () => {
     server.services.stopMonitor();

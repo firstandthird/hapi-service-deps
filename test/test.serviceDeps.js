@@ -22,12 +22,12 @@ tap.test('can initialize and use service deps', async t => {
   t.end();
 });
 
-tap.test('options.startMonitor will not listen until explicitly called when false', async t => {
+tap.test('options.startMonitor will start listening when server starts', async t => {
   const server = new Hapi.Server({ port: 8080 });
   await server.register({
     plugin,
     options: {
-      startMonitor: false,
+      startMonitor: true,
       monitorInterval: 100,
       services: {
         test: 'http://localhost:8080'
@@ -47,9 +47,6 @@ tap.test('options.startMonitor will not listen until explicitly called when fals
     checks++;
   });
   await wait(200);
-  t.equal(checks, 0, 'does not monitor until started');
-  server.services.startMonitor();
-  await wait(200);
   // verify event handler was called:
   t.ok(checks > 0);
   // now stop server:
@@ -59,40 +56,6 @@ tap.test('options.startMonitor will not listen until explicitly called when fals
   await wait(200);
   // verify event handler was not called after close:
   t.equal(preChecks, checks);
-  t.end();
-});
-
-tap.test('options.startMonitor will start listening as soon as plugin is loaded', async t => {
-  const server = new Hapi.Server({ port: 8080 });
-  const server2 = new Hapi.Server({ port: 8081 });
-  await server.register({
-    plugin,
-    options: {
-      // startMonitor defaults to true
-      monitorInterval: 100,
-      services: {
-        test: 'http://localhost:8081/'
-      }
-    }
-  });
-  server2.route({
-    method: 'get',
-    path: '/',
-    handler(request, h) {
-      return 'ok';
-    }
-  });
-  await server2.start();
-  let checks = 0;
-  server.services.on('service.check', () => {
-    checks++;
-  });
-  await wait(300);
-  // verify event handler was called:
-  t.ok(checks > 0);
-  // now stop server:
-  await server.stop();
-  await server2.stop();
   t.end();
 });
 
