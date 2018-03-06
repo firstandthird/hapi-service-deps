@@ -10,7 +10,7 @@ const register = (server, options) => {
     server.services.stopMonitor();
   });
   server.services.on('service.error', (name, service, error) => {
-    server.log(['service-deps', 'error'], { name, service, error });
+    server.log(['service-deps', 'error'], { name, service, error: error.stack || error.message || error });
   });
 };
 
