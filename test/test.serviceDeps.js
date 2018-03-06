@@ -57,6 +57,35 @@ tap.test('service deps starts/stops listening when server starts/stops', async t
   t.end();
 });
 
+tap.test('will log an error when "service.error" event is emitted', async t => {
+  const server = new Hapi.Server({ port: 8080 });
+  await server.register({
+    plugin,
+    options: {
+      services: {
+        test: 'http://test'
+      }
+    }
+  });
+  let seen = false;
+  server.events.on('log', (input) => {
+    t.isA(input.timestamp, 'number');
+    t.equal(input.tags[0], 'service-deps');
+    t.equal(input.tags[1], 'error');
+    t.match(input.data, {
+      name: 'test',
+      service: { endpoint: 'http://test' },
+    });
+    t.match(input.data.error, 'Error: this is an error');
+    seen = true;
+  });
+  server.services.emit('service.error', 'test', { endpoint: 'http://test' }, new Error('this is an error'));
+  await server.stop();
+  await wait(200);
+  t.ok(seen);
+  t.end();
+});
+
 tap.test('verbose mode logs service.add and service.check', async t => {
   const server = new Hapi.Server({ port: 8080 });
   await server.register({
