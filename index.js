@@ -10,7 +10,7 @@ const register = (server, pluginOptions) => {
   const services = new ServiceDeps(options);
   server.decorate('server', 'services', services);
   if (options.checkOnStart) {
-    server.services.checkServices();
+    server.ext('onPreStart', server.services.checkServices.bind(services));
   }
 
   server.events.on('start', () => {
