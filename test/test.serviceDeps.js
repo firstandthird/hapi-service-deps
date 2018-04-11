@@ -18,7 +18,9 @@ tap.test('can initialize and use service deps', async t => {
   });
   const service = server.services.getService('test');
   t.deepEqual(service, {
-    endpoint: 'http://test'
+    endpoint: 'http://test',
+    health: '/',
+    prefix: ''
   });
   t.end();
 });
@@ -118,6 +120,7 @@ tap.test('verbose mode logs service.add and service.check', async t => {
       serviceCheck = true;
       t.match(input.data.name, 'test');
       t.match(input.data.service, { endpoint: 'http://localhost:8080/' });
+      t.match(input.data.healthUrl, 'http://localhost:8080/');
     }
     if (!serviceAdd && input.tags.includes('service.add')) {
       serviceAdd = true;

@@ -33,7 +33,7 @@ const register = (server, pluginOptions) => {
 
   if (options.verbose) {
     server.services.on('service.check', (name, service, healthUrl) => {
-      server.log(['hapi-service-deps', 'service.check'], { name, service });
+      server.log(['hapi-service-deps', 'service.check'], { name, service, healthUrl });
     });
     server.services.on('service.add', (name) => {
       server.log(['hapi-service-deps', 'service.add'], { name });
