@@ -20,10 +20,6 @@ const register = (server, pluginOptions) => {
     server.ext('onPreStart', server.services.checkServices.bind(services));
   }
 
-  server.events.on('start', () => {
-    server.services.startMonitor();
-  });
-
   server.events.on('stop', () => {
     server.services.stopMonitor();
   });
