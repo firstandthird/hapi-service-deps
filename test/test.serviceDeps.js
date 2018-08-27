@@ -83,6 +83,7 @@ tap.test('will log an error when "service.error" event is emitted', async t => {
     t.match(input.data, {
       name: 'test',
       service: { endpoint: 'http://test' },
+      message: 'this is an error'
     });
     t.match(input.data.error, 'Error: this is an error');
     seen = true;
@@ -119,12 +120,14 @@ tap.test('verbose mode logs service.add and service.check', async t => {
     if (!serviceCheck && input.tags.includes('service.check')) {
       serviceCheck = true;
       t.match(input.data.name, 'test');
+      t.match(input.data.message, 'service check for test at url http://localhost:8080/');
       t.match(input.data.service, { endpoint: 'http://localhost:8080/' });
       t.match(input.data.healthUrl, 'http://localhost:8080/');
     }
     if (!serviceAdd && input.tags.includes('service.add')) {
       serviceAdd = true;
       t.match(input.data.name, 'test');
+      t.match(input.data.message, 'service test added');
     }
   });
   await server.start();
