@@ -24,7 +24,7 @@ const register = (server, pluginOptions) => {
     server.services.stopMonitor();
   });
   server.services.on('service.error', (name, service, error) => {
-    server.log(['service-deps', 'error'], { name, service, message: error.message, error: error.stack || error });
+    server.log(['service-deps', 'error'], { name, service, message: `Error with service "${name}"`, error });
   });
 
   if (options.verbose) {

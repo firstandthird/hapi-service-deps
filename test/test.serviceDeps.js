@@ -83,9 +83,8 @@ tap.test('will log an error when "service.error" event is emitted', async t => {
     t.match(input.data, {
       name: 'test',
       service: { endpoint: 'http://test' },
-      message: 'this is an error'
+      message: 'Error with service "test"'
     });
-    t.match(input.data.error, 'Error: this is an error');
     seen = true;
   });
   server.services.emit('service.error', 'test', { endpoint: 'http://test' }, new Error('this is an error'));
