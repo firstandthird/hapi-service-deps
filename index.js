@@ -24,15 +24,15 @@ const register = (server, pluginOptions) => {
     server.services.stopMonitor();
   });
   server.services.on('service.error', (name, service, error) => {
-    server.log(['service-deps', 'error'], { name, service, error: error.stack || error.message || error });
+    server.log(['service-deps', 'error'], { name, service, message: `Error with service "${name}"`, error: error.stack || error.message || error });
   });
 
   if (options.verbose) {
     server.services.on('service.check', (name, service, healthUrl) => {
-      server.log(['hapi-service-deps', 'service.check'], { name, service, healthUrl });
+      server.log(['hapi-service-deps', 'service.check'], { name, service, healthUrl, message: `service check for ${name} at url ${healthUrl}` });
     });
     server.services.on('service.add', (name) => {
-      server.log(['hapi-service-deps', 'service.add'], { name });
+      server.log(['hapi-service-deps', 'service.add'], { name, message: `service ${name} added` });
     });
   }
 };
